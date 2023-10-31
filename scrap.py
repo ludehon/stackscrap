@@ -61,8 +61,6 @@ if __name__ == "__main__":
         result = get_stackoverflow_data(question_id)
         if (result is not None) and (result[0] is not None) and (result[0] != ""):
             title, question, answer = result
-            print(len(title))
-            print(f"title:{title}")
             save_to_csv(csv_filename, [question_id, title, question, answer])
             print(f"Question ID {question_id}: Saved to CSV")
         else:
