@@ -1,7 +1,27 @@
+import os
 import csv
 import time
 import requests
 from bs4 import BeautifulSoup
+
+
+"""
+Save last iteration number to file_path
+"""
+def save_range(file_path, last_iteration):
+    with open(file_path, "w") as file:
+        file.write(str(last_iteration))
+
+
+"""
+Load last iteration from file_path
+"""
+def load_range(file_path, default_start):
+    if os.path.exists(file_path):
+        with open(file_path, "r") as file:
+            return int(file.read()) + 1
+    else:
+        return default_start
 
 
 """
@@ -56,8 +76,11 @@ def save_to_csv(filename, data):
 
 
 if __name__ == "__main__":
+    iteration_filename = "last_iteration.txt"
+    start_iteration = load_range(iteration_filename, 1)
     csv_filename = "accepted_answers.csv"
-    for question_id in range(2932, 2933):
+
+    for question_id in range(start_iteration, start_iteration + 30000):
         result = get_stackoverflow_data(question_id)
         if (result is not None) and (result[0] is not None) and (result[0] != ""):
             title, question, answer = result
@@ -65,4 +88,6 @@ if __name__ == "__main__":
             print(f"Question ID {question_id}: Saved to CSV")
         else:
             print(f"Question ID {question_id}: not saved")
+        last_iteration = question_id
         time.sleep(1)
+    save_range(iteration_filename, last_iteration)
