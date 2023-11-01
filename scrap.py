@@ -37,7 +37,7 @@ def extract_text_with_code(question_div):
         if i < len(code_tags):
             code_text = code_tags[i].find('code').get_text() if code_tags[i].find('code') else ""
             result_text += f"<code>{code_text}</code>\n"
-    return result_text.replace('\n', ' ')
+    return result_text.replace('\n', ' ').replace('\t', ' ')
 
 
 """
@@ -71,7 +71,7 @@ def get_stackoverflow_data(question_id):
 
 def save_to_csv(filename, data):
     with open(filename, 'a', newline='', encoding='utf-8') as csv_file:
-        csv_writer = csv.writer(csv_file)
+        csv_writer = csv.writer(csv_file, delimiter="\t")
         csv_writer.writerow(data)
 
 
@@ -80,7 +80,7 @@ if __name__ == "__main__":
     start_iteration = load_range(iteration_filename, 1)
     csv_filename = "accepted_answers.csv"
 
-    for question_id in range(start_iteration, start_iteration + 30000):
+    for question_id in range(start_iteration, start_iteration + 100):
         result = get_stackoverflow_data(question_id)
         if (result is not None) and (result[0] is not None) and (result[0] != ""):
             title, question, answer = result
@@ -89,5 +89,5 @@ if __name__ == "__main__":
         else:
             print(f"Question ID {question_id}: not saved")
         last_iteration = question_id
-        time.sleep(1)
+        time.sleep(0.7)
     save_range(iteration_filename, last_iteration)

@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 accepted_answers.csv
+last_iteration.txt
