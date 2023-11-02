@@ -52,21 +52,27 @@ def get_stackoverflow_data(question_id):
         not_found_heading = soup.find('h1', text="Page not found")
         if not_found_heading:
             print(f"{question_id} not found")
-            return None, None, None
+            return None, None, None, None
         # Check if there is an accepted answer div
         accepted_answer_div = soup.find('div', class_='accepted-answer')
         if accepted_answer_div:
             # question parsing
             question_div = soup.find('div', class_='postcell')
             question_body = question_div.find('div', class_='js-post-body')
+            question_timestamp = None # div itemprop="mainEntity"
+            # dsfgd
+            inner_content_div = soup.find('div', class_='inner-content')
+            date_tag = inner_content_div.find_all('div')[2]
+            question_timestamp = date_tag.find('time').get('datetime')
             question_text = extract_text_with_code(question_body)
             question_title = soup.title.string
+
             # answer parsing
             answer_text = extract_text_with_code(accepted_answer_div.find('div', class_='js-post-body'))
-            return question_title, question_text, answer_text
+            return question_timestamp, question_title, question_text, answer_text
     else:
         print(f"{question_id}-> {response.status_code}")
-        return None, None, None
+        return None, None, None, None
 
 
 def save_to_csv(filename, data):
@@ -80,11 +86,11 @@ if __name__ == "__main__":
     start_iteration = load_range(iteration_filename, 1)
     csv_filename = "accepted_answers.csv"
 
-    for question_id in range(start_iteration, start_iteration + 100):
+    for question_id in range(4, 15):
         result = get_stackoverflow_data(question_id)
         if (result is not None) and (result[0] is not None) and (result[0] != ""):
-            title, question, answer = result
-            save_to_csv(csv_filename, [question_id, title, question, answer])
+            date, title, question, answer = result
+            save_to_csv(csv_filename, [date, question_id, title, question, answer])
             print(f"Question ID {question_id}: Saved to CSV")
         else:
             print(f"Question ID {question_id}: not saved")
