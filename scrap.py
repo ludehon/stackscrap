@@ -86,7 +86,7 @@ if __name__ == "__main__":
     start_iteration = load_range(iteration_filename, 1)
     csv_filename = "accepted_answers.csv"
 
-    for question_id in range(start_iteration + 1, start_iteration + 40000):
+    for question_id in range(start_iteration + 1, start_iteration + 400000):
         result = get_stackoverflow_data(question_id)
         if (result is not None) and (result[0] is not None) and (result[0] != ""):
             date, title, question, answer = result
